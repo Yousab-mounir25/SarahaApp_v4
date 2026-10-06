@@ -13,10 +13,10 @@ export const authentication = (tokenType = TokenTypeEnum.ACCESS) => {
     console.log({ key, token });
 
     switch (key) {
-      case "Basic":
-        const [email,password] = Buffer.from(token, "base64").toString().split(":");
-        // console.log({ email , password });
-        break;
+      // case "Basic":
+      //   const [email,password] = Buffer.from(token, "base64").toString().split(":");
+      //   // console.log({ email , password });
+      //   break;
       case "Bearer":
         const { user, payload } = await decodeToken({authorization:token,tokenType});
         req.user = user

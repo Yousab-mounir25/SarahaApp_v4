@@ -21,12 +21,12 @@ import { exist, set } from "../services/cache.service.js";
 
 
 
-export const userBaseRevokeToken = async ({ userId }) => {
+export const userBaseRevokeToken =  ({ userId }) => {
   return `User::${userId.toString()}::RevokeToken::`;
 };
 
 //revoke token
-export const userRevokeToken = async ({ userId, jti }) => {
+export const userRevokeToken =  ({ userId, jti }) => {
   return `${userBaseRevokeToken({userId})}::${jti}`;
 };
 
@@ -51,7 +51,7 @@ export const verifyToken = async ({
 export const getTokenSignatures = async ({ role = RoleEnum.USER } = {}) => {
   let signatures;
   switch (role) {
-    case role == RoleEnum.ADMIN:
+    case  RoleEnum.ADMIN:
       signatures = {
         accessSignature: ACCESS_ADMIN_TOKEN_SIGNATURE,
         refreshSignature: REFRESH_ADMIN_TOKEN_SIGNATURE,
