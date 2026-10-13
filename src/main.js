@@ -1,5 +1,5 @@
 import express from 'express'
-import { authenticationController  ,userController } from './modules/index.js'
+import { authenticationController  ,userController , messageController } from './modules/index.js'
 import { globalErrorHandling } from './middleware/index.js'
 import { APP_EMAIL, APP_PASSWORD, PORT } from './config.js'
 import { bootstrapDB } from './DB/connection.db.js'
@@ -22,6 +22,7 @@ app.get('/' , (req,res,next)=>{
 
 app.use('/auth' , authenticationController)
 app.use('/user' , userController)
+app.use('/message' , messageController)
 app.all('{/*dummy}' , (req,res,next)=>{
     return res.status(404).json({message:"invalid ROuting"})
 })

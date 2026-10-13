@@ -49,7 +49,7 @@ export const processFile = async ({
     await mkdir(resolve(`./assets/${customPath}`), { recursive: true });
     const uniqueFilePath = `assets/${customPath}/${randomUUID()}.${result.ext}`;
     await writeFile(resolve(`./${uniqueFilePath}`), file.buffer);
-    file.finalPath = uniqueFilePath;
+    file.path = uniqueFilePath;
   }
   return file;
 };

@@ -9,7 +9,9 @@ export const validation = (schema) => {
     const validationResult = schema(lang).safeParse({
       body:req.body,
       query:req.query,
-      params:req.params
+      params:req.params,
+      files:req.files,
+      file:req.file
     });
     console.log({v:validationResult.data});
     

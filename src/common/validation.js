@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { GenderEnum } from "./enum/user.enum.js";
 import { LanguageEnum } from "./enum/security.enum.js";
+import mongoose from "mongoose";
 
 export const matchFields = ({ original = "", copy, data, ctx, lang }) => {
   if (data[original] != data[copy]) {
@@ -86,5 +87,15 @@ export const generalValidationFields = {
         ? "invalid otp format, please enter otp like: 123456"
         : "عفوا رمز التحقق غير صحيح, يرجى ادخال رمز التحقق مثل: 123456",
   }),
+  id:(lang)=>z.string().refine((data)=>{return mongoose.Types.ObjectId.isValid(data)}, {message:"Invalid ID"}),
+  file:(lang)=>z.strictObject({
+                fieldname: z.string(),
+                originalname: z.string(),
+                encoding: z.string(),
+                mimetype: z.string(),
+                buffer:z.instanceof(Buffer),
+                size:z.number(),
+                path: z.string()
+            }),
   matchFields,
 };

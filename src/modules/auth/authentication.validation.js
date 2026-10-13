@@ -18,7 +18,7 @@ export const login = (lang) => {
       darkMood: z.stringbool({
         truthy: ["true", "True", "1"],
         falsy: ["false", "False", "0"],
-      }),
+      }).optional(),
     }),
   });
 };
