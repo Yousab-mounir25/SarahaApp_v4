@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { successResponse } from './../../common/utils/success.response.js';
-import { createMessage, getAllMessages } from "./message.service.js";
+import { createMessage, deleteMessage, getAllMessages, getMessageById } from "./message.service.js";
 import { uploadMiddleware } from './../../middleware/multer.middleware.js';
 import { fileValidation, localFileUpload } from "../../common/utils/multer/local.multer.js";
 import * as validators from './message.validation.js'
@@ -38,6 +38,16 @@ router.post('/' ,
 
 router.get('/' , authentication() , validation(validators.getAllMessages) , async(req,res,next)=>{
     const data = await getAllMessages(req.validate.query , req.user)
+    return successResponse({res, data})
+})
+
+
+    router.get('/:messageId' , authentication() , validation(validators.deleteMessage) , async(req,res,next)=>{
+    const data = await getMessageById(req.validate.params , req.user)
+    return successResponse({res, data})
+})
+router.delete('/:messageId' , authentication() , validation(validators.deleteMessage) , async(req,res,next)=>{
+    const data = await deleteMessage(req.validate.params , req.user)
     return successResponse({res, data})
 })
 

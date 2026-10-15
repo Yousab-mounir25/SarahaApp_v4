@@ -27,7 +27,15 @@ export const getAllMessages = (lang) => {
   return z.object({
     query: z.strictObject({
         type: z.enum(["sent", "received" , "both"]).default("received").optional(),
-      
+        page:z.coerce.number().default(1),
+        limit:z.coerce.number().default(5),
+    })
+  });
+};
+export const deleteMessage = (lang) => {
+  return z.object({
+    params: z.strictObject({
+        messageId: generalValidationFields.id(lang)
     })
   });
 };

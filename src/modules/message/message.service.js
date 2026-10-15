@@ -1,6 +1,6 @@
 
 import { NotFoundException } from '../../common/exceptions/error.exception.js';
-import { create, find, findById } from './../../common/repository/db.repository.js';
+import { countDocuments, create, deleteOne, find, findById, findOne, paginate } from './../../common/repository/db.repository.js';
 import { MessageModel  } from './../../DB/model/message.model.js';
 import { UserModel  } from './../../DB/model/user.model.js';
 export const createMessage =async ({ content, receiverId } = {}, files = [] , user=undefined) => {
@@ -27,7 +27,7 @@ export const createMessage =async ({ content, receiverId } = {}, files = [] , us
 
 
 };
-export const getAllMessages =async ({type}={} , user) => {
+export const getAllMessages =async ({type , limit , page},  user) => {
     let filter = {}
     if(type === "sent"){
         filter = {senderId: user._id}
@@ -40,18 +40,46 @@ export const getAllMessages =async ({type}={} , user) => {
         ]}
     }
     console.log({type , ...filter});
+
+
     
-    const messages = await find({
-        model:MessageModel,
-        filter:{
-            ...filter
-        }
-    })
-    if(!messages){
-        throw NotFoundException("No messages found")
-    }
+   const data = await paginate({
+    model : MessageModel,
+    filter , options:{sort:{createdAt:-1}},
+    page,
+    limit
+   })
   
-    return messages 
+    return data
 
 
 };
+
+export const deleteMessage= async ({messageId},user)=>{
+    const data = await deleteOne({
+        model:MessageModel,
+        filter:{
+            receiverId:user._id,
+            _id:messageId
+        }
+    });
+
+    if(!data.deletedCount){
+        throw NotFoundException('Invalid message ID')
+    }
+    return data
+}
+export const getMessageById= async ({messageId},user)=>{
+    const data = await findOne({
+        model:MessageModel,
+        filter:{
+            receiverId:user._id,
+            _id:messageId
+        }
+    });
+
+    if(!data){
+        throw NotFoundException('Invalid message ID')
+    }
+    return data
+}
