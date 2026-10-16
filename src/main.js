@@ -1,19 +1,34 @@
 import express from 'express'
 import { authenticationController  ,userController , messageController } from './modules/index.js'
 import { globalErrorHandling } from './middleware/index.js'
-import { APP_EMAIL, APP_PASSWORD, PORT } from './config.js'
+import { APP_EMAIL, APP_PASSWORD, ORIGINS, PORT } from './config.js'
 import { bootstrapDB } from './DB/connection.db.js'
 import {resolve} from 'node:path'
 import cors from 'cors'
 import { set } from './common/services/index.js'
 import { createOtp } from './common/utils/otp.js'
+import { stat } from 'node:fs'
+import helmet from 'helmet'
 const app =express()
 const port = PORT
-app.use(cors())
-app.use(express.json())
+// app.use(cors())
+// app.use(express.json())
 app.use('/assets'  , express.static('./assets'))
 await bootstrapDB(app,port)
 
+
+// var corsOptions = {
+//   origin: function (origin, callback) {
+//     if(!ORIGINS.includes(origin)){
+//         callback(new Error("invalid cors origins" , {cause:{status:401}}))
+//     }
+//     callback(null , ORIGINS)
+//   }
+// }
+
+
+//if we want to block postman from send requests--> because the cors origin from it is --->undefined 
+app.use( helmet(), cors()  , express.json())
 
 
 app.get('/' , (req,res,next)=>{

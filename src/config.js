@@ -19,7 +19,7 @@ export const REFRESH_ADMIN_TOKEN_SIGNATURE=process.env.REFRESH_ADMIN_TOKEN_SIGNA
 
 export const ACCESS_TOKEN_EXPIRESIN=parseInt(process.env.ACCESS_TOKEN_EXPIRESIN ?? "1800")
 export const REFRESH_TOKEN_EXPIRESIN=parseInt(process.env.REFRESH_TOKEN_EXPIRESIN ?? "86400")
-export const WEB_CLIENT_IDS=process.env.WEB_CLIENT_IDS.split(",")
+export const WEB_CLIENT_IDS=process.env.WEB_CLIENT_IDS.split(",") || []
  
 
 export const APP_PASSWORD=process.env.APP_PASSWORD
@@ -28,4 +28,5 @@ export const APP_EMAIL=process.env.APP_EMAIL
 export const INSTGRAM_LINK=process.env.INSTGRAM_LINK
 export const TWITTER_LINK=process.env.TWITTER_LINK
 export const FACEBOOK_LINK=process.env.FACEBOOK_LINK
+export const ORIGINS=process.env.ORIGINS.split(",") || []
 
