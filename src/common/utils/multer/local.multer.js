@@ -42,7 +42,7 @@ export const processFile = async ({
   validation = [],
 }) => {
   const result = await fileTypeFromBuffer(file.buffer);
-  console.log({ result });
+  // console.log({ result });
   if (!result || !validation.includes(result.mime)) {
     throw BadException("invalid file formats");
   } else {

@@ -9,14 +9,14 @@ import { set } from './common/services/index.js'
 import { createOtp } from './common/utils/otp.js'
 import { stat } from 'node:fs'
 import helmet from 'helmet'
+import axios from 'axios'
+import morgan from 'morgan'
+import { generateLimiter } from './common/utils/limiter.js'
 const app =express()
 const port = PORT
-// app.use(cors())
-// app.use(express.json())
 app.use('/assets'  , express.static('./assets'))
 await bootstrapDB(app,port)
-
-
+app.set("trust proxy" , true)
 // var corsOptions = {
 //   origin: function (origin, callback) {
 //     if(!ORIGINS.includes(origin)){
@@ -28,7 +28,10 @@ await bootstrapDB(app,port)
 
 
 //if we want to block postman from send requests--> because the cors origin from it is --->undefined 
-app.use( helmet(), cors()  , express.json())
+
+const limiter = await generateLimiter({limit:10})
+
+app.use(  helmet(), cors() , morgan("dev"), limiter ,express.json())
 
 
 app.get('/' , (req,res,next)=>{

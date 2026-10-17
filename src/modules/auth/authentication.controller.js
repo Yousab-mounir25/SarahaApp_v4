@@ -13,6 +13,9 @@ import { successResponse } from "../../common/utils/success.response.js";
 import * as validators from "./authentication.validation.js";
 import { validation } from "../../middleware/validation.middleware.js";
 import { authentication } from "../../middleware/authentication.middleware.js";
+import { del } from "../../common/services/cache.service.js";
+import { rateLimit } from 'express-rate-limit';
+import { generateLimiter } from "../../common/utils/limiter.js";
 
 const router = Router();
 
@@ -43,11 +46,12 @@ router.post("/signup-with-gmail", async (req, res, next) => {
   });
 });
 
-
-
+//Maximum Login attempts
+const loginLimiter = await generateLimiter({limit:5 , ttl:5 , skipSuccessfulRequests:true})
 //add validation middleware
-router.post("/login", validation(validators.login), async (req, res, next) => {
+router.post("/login", loginLimiter , validation(validators.login), async (req, res, next) => {
   const user = await login(req.validate.body, `${req.protocol}://${req.host}`);
+  await del({key:req.rateLimit.key})
   return successResponse({ res, data: user });
 });
 router.patch("/confirm-email", validation(validators.confirmEmail), async (req, res, next) => {

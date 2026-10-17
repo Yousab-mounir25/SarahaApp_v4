@@ -169,7 +169,7 @@ export const createRevoketoken = async ({payload}) => {
   const consumedTime = Math.ceil(Date.now() / 1000) - payload.iat;
   const refreshExpiresIn = payload.iat + REFRESH_TOKEN_EXPIRESIN;
   const ttl = refreshExpiresIn - consumedTime;
-  console.log({ payload, consumedTime, refreshExpiresIn, ttl });
+  // console.log({ payload, consumedTime, refreshExpiresIn, ttl });
   await set({
     key: userRevokeToken({ userId: payload.sub, jti: payload.jti }),
     value: payload.jti,
