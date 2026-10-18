@@ -44,7 +44,7 @@ export const rotateToken = async (payload, user , issuer ) => {
 
 export const logout = async (payload, user , {action=LogoutEnum.DEVICE}) => {
   switch (action) {
-    case LogoutEnum.All:
+    case LogoutEnum.ALL:
       user.changeCredentialsTime=new Date()
       await user.save()
       await del({key:await keys({prefix:userBaseRevokeToken({userId:payload.sub})})})

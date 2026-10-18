@@ -269,7 +269,7 @@ export const verifyForgotPasswordCode = async (inputs) => {
 export const resetForgotPassword = async (inputs) => {
   const { otp, email , password } = inputs;
   const account = await verifyForgotPasswordCode({otp , email})
-  account.password = hash({plainText:password})
+  account.password =await hash({plainText:password})
   account.changeCredentialsTime = new Date()
   await account.save()
   const result = await Promise.all([keys({prefix:userBaseRevokeToken({userId:account._id})}) , keys({prefix:userEmailKey({email,subject:EmailSubjectEnum.FORGET_PASSWORD})}) ])
