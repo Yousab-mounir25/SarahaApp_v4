@@ -95,6 +95,14 @@ export const resetForgotPassword = (lang)=>{
   })
 }
 
+export const loginWithGmail = (lang) => {
+  return z.object({
+    body: z.strictObject({
+      idToken: z.string().min(1),
+    }),
+  });
+};
+
 
 
 // .refine((data)=>{

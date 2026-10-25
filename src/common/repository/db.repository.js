@@ -62,7 +62,7 @@ export const paginate = async ({
   limit = 5,
 } = {}) => {
   const skip = (page - 1) * limit;
-  const count = (await countDocuments({ filter, model })) / limit;
+   const count = await countDocuments({ filter, model });
   const pages = Math.ceil(count / limit);
   const docs = await find({
     model,
