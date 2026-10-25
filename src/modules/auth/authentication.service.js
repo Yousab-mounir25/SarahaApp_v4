@@ -6,6 +6,7 @@ import {
   ConflictException,
   NotFoundException,
   TooManyRequestException,
+  UnAuthorizedException,
 } from "../../common/exceptions/index.js";
 import {
   decryption,
@@ -59,10 +60,15 @@ import { createOtp } from "../../common/utils/otp.js";
 
 const client = new OAuth2Client();
 async function verifyGoogleAccount(idToken) {
-  const ticket = await client.verifyIdToken({
-    idToken,
-    audience: WEB_CLIENT_IDS, // Specify the CLIENT_ID of the app that accesses the backend
-  });
+  let ticket;
+  try {
+    ticket = await client.verifyIdToken({
+      idToken,
+      audience: WEB_CLIENT_IDS, // Specify the CLIENT_ID of the app that accesses the backend
+    });
+  } catch (error) {
+    throw UnAuthorizedException("invalid google token");
+  }
   const payload = ticket.getPayload();
   if (!payload.email_verified) {
     throw BadException("not verified email");
@@ -74,7 +80,7 @@ async function verifyGoogleAccount(idToken) {
 //   return await createLoginCredentials({user:existingUser ,issuer})
 // }
 
-export const signupWithGmail = async ({ idToken, issuer }) => {
+export const signupWithGmail = async ({ idToken}, issuer ) => {
   //after i receive the idToken from the frontend
   //I talked to google to verify the token , then i receive from google the payload that contain the data
   const { email, name, picture } = await verifyGoogleAccount(idToken);
@@ -92,7 +98,7 @@ export const signupWithGmail = async ({ idToken, issuer }) => {
       data: await createLoginCredentials({ user: existAccount, issuer }),
     };
   }
-
+  
   //if not exist --> add user
   const user = await create({
     model: UserModel,
@@ -108,6 +114,24 @@ export const signupWithGmail = async ({ idToken, issuer }) => {
     status: 201,
     data: await createLoginCredentials({ user: existAccount, issuer }),
   };
+};
+
+// Login with an existing Google account (the account must have been created with Google).
+export const loginWithGmail = async ({ idToken }, issuer) => {
+  const { email } = await verifyGoogleAccount(idToken);
+  const user = await findOne({
+    model: UserModel,
+    filter: { email },
+  });
+  if (!user) {
+    throw NotFoundException("No account for this Google email, please sign up with Google first");
+  }
+  if (user.provider != ProviderEnum.GOOGLE) {
+    throw ConflictException(
+      "This email is registered with a password, please log in with your email and password",
+    );
+  }
+  return await createLoginCredentials({ user, issuer });
 };
 
 //create function to generate otp and send it to the user email

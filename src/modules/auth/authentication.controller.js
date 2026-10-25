@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   confirmEmail,
   login,
+  loginWithGmail,
   requestForgotPasswordCode,
   resendConfirmEmail,
   resetForgotPassword,
@@ -48,6 +49,12 @@ router.post("/signup-with-gmail", async (req, res, next) => {
 
 //Maximum Login attempts
 const loginLimiter = await generateLimiter({limit:5 , ttl:5 , skipSuccessfulRequests:true})
+
+router.post("/login-with-gmail", loginLimiter, validation(validators.loginWithGmail), async (req, res, next) => {
+  const data = await loginWithGmail(req.validate.body, `${req.protocol}://${req.host}`);
+  await del({key:req.rateLimit.key})
+  return successResponse({ res, data });
+});
 //add validation middleware
 router.post("/login", loginLimiter , validation(validators.login), async (req, res, next) => {
   const user = await login(req.validate.body, `${req.protocol}://${req.host}`);
