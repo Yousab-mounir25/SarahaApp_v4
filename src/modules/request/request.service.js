@@ -16,6 +16,12 @@ import { IdentityRequestModel } from "../../DB/model/identityRequest.model.js";
 import { ConversationModel } from "../../DB/model/conversation.model.js";
 
 const isDuplicateKey = (error) => error?.code === 11000;
+// The requester must not learn who the sender is until the request is accepted.
+const hideSender = (doc) => {
+  const obj = doc.toObject ? doc.toObject() : { ...doc };
+  if (obj.status !== RequestStatusEnum.ACCEPTED) delete obj.senderId;
+  return obj;
+};
 
 // 2) Request sender identity: the receiver of a message asks who sent it.
 export const createRequest = async ({ messageId }, user) => {
@@ -45,8 +51,8 @@ export const createRequest = async ({ messageId }, user) => {
     );
   }
 
-  try {
-    return await create({
+    try {
+    const request = await create({
       model: IdentityRequestModel,
       data: {
         messageId,
@@ -55,6 +61,7 @@ export const createRequest = async ({ messageId }, user) => {
         status: RequestStatusEnum.PENDING,
       },
     });
+    return hideSender(request);
   } catch (error) {
     if (isDuplicateKey(error)) {
       throw ConflictException(
@@ -91,6 +98,7 @@ export const getRequests = async ({ type, status, page, limit }, user) => {
     page,
     limit,
   });
+   if (!incoming) data.docs = data.docs.map(hideSender);
   return data;
 };
 

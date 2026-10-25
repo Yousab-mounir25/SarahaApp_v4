@@ -29,7 +29,8 @@ app.set("trust proxy" , true)
 
 //if we want to block postman from send requests--> because the cors origin from it is --->undefined 
 
-const limiter = await generateLimiter({limit:10})
+// const limiter = await generateLimiter({limit:10})
+const limiter = await generateLimiter({limit:300})
 
 app.use(  helmet(), cors() , morgan("dev"), limiter ,express.json())
 

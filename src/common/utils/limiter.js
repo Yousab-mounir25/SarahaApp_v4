@@ -25,10 +25,11 @@ export const generateLimiter = async({
 })=>{
     return rateLimit({
     windowMs:ttl*60*1000, //how long should we remember the request
-    limit: function(req){
-        const data =  fromWhere(req.ip)
-        return ttl
-    },
+    // limit: function(req){
+    //     const data =  fromWhere(req.ip)
+    //     return ttl
+    // },
+    limit,
     skipSuccessfulRequests,
     legacyHeaders,
     standardHeaders,
